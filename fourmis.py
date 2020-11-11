@@ -12,6 +12,12 @@ import pygame, argparse, sys
 
 '''
 
+'''
+TODO: Définir la position de la fourmis. Elle sera représentée par un 2 dans la matrice.
+        - Pour l'instant tout le board sera update à chaque itération. A terme, il serai plus judicieux de 
+            ne mettre à jour que la position de la fourmis et la case qu'elle viens de quitter
+'''
+
 #Définition des constantes
 FILE = ""
 FPS = 30
@@ -25,7 +31,7 @@ def main():
     print('Lancement de la simu.')
     version()
 
-if __name__ == '__main__':
+def parser():
     parser = argparse.ArgumentParser(description='''La fourmis de Langton. 
         Automate cellulaire célèbre implémenté en python
     ''')
@@ -34,7 +40,12 @@ if __name__ == '__main__':
     parser.add_argument("-v", "--version", help="prints the version and exits.", action="store_true")
     parser.add_argument("-s", "--speed", help="The speed of the game in frames per second (fps)")
 
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    
+    args = parser()
 
     if args.version:
         version()
