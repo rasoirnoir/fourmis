@@ -1,58 +1,34 @@
-#!/usr/bin/env python
 
-import pygame, argparse, sys
+def fourmisModule():
+    """Confirme le chargement du module Fourmis"""
+    print("Fourmis module loaded")
 
-'''
+class Direction:
+    HAUT, BAS, GAUCHE, DROITE = range(1,5)
 
-    Implémentation en python de la fourmis de Langton
-    Règles du jeu :
-     - Si la fourmis se tient sur une case noire, elle tourne à gauche
-     - Si elle se trouve sur une case blanche, elle tourne à droite
-     - La case sur laquelle elle se tenait change de couleur
+def startSimu(matrix, fps):
+    """Initialise le Board
 
-'''
+    Args:
+        matrix (Array): une image du board
+        fps (integer): le nombre d'images par secondes affichées 
+    """
+    position = [int(len(matrix[0]) / 2), int(len(matrix) / 2)] #position initiale de la fourmis : le centre du board
+    direction = Direction.HAUT
+    nbIte = 0
+    nextIte(matrix, position, direction)
 
-'''
-TODO: Définir la position de la fourmis. Elle sera représentée par un 2 dans la matrice.
-        - Pour l'instant tout le board sera update à chaque itération. A terme, il serai plus judicieux de 
-            ne mettre à jour que la position de la fourmis et la case qu'elle viens de quitter
-'''
+def nextIte(matrix, position, direction):
+    """Calcule la matrice suivante d'apres les règles du jeu
 
-#Définition des constantes
-FILE = ""
-FPS = 30
-VERSION = "0.1"
-DEBUG = False
+    Args:
+        matrix (array): la représentation du board, array en 2 dimensions
+        position (array): coordonnées de la fourmis dans le board
+        direction (Direction): La direction dans laquelle regarde la fourmis
+    """
+    # case noire : tourne à gauche
+    # case blanche : tourne à droite
+    # la case précédente change de couleur
 
-def version():
-    print("fourmis.py version {} by CactusPin".format(VERSION))
-
-def main():
-    print('Lancement de la simu.')
-    version()
-
-def parser():
-    parser = argparse.ArgumentParser(description='''La fourmis de Langton. 
-        Automate cellulaire célèbre implémenté en python
-    ''')
-
-    parser.add_argument("file", help="The file containing the game board as a matrix.")
-    parser.add_argument("-v", "--version", help="prints the version and exits.", action="store_true")
-    parser.add_argument("-s", "--speed", help="The speed of the game in frames per second (fps)")
-
-    return parser.parse_args()
-
-
-if __name__ == '__main__':
+    couleur = matrix[position[0]][position[1]]
     
-    args = parser()
-
-    if args.version:
-        version()
-        sys.exit(0)
-    if args.speed:
-        FPS = int(args.speed)
-
-    FILE = args.file
-    main()
-
