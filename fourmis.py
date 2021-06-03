@@ -18,6 +18,8 @@ class Fourmis:
         self.position = position
         self.direction = direction
         self.ite = 0
+        self.previousPos = []
+        self.previousDir = None
 
     def deplacement(self, couleur):
         """Déplace la fourmis sur le board d'après les règles du jeu
@@ -25,7 +27,8 @@ class Fourmis:
         Args:
             couleur (integer): la couleur de la case de départ de la fourmis
         """
-
+        self.previousPos = self.position
+        self.previousDir = self.direction
         if couleur == 0:  # case noire
             # on déplace la fourmis d'une case à gauche et on change son orientation
             # on tourne à gauche
@@ -73,6 +76,11 @@ class Fourmis:
         ite = "Etat de la fourmis à l'itération {}".format(self.ite)
         return ite + "\n" + pos + " " + dir
 
+    def hasMoved(self):
+        if self.previousPos == self.position and self.previousDir == self.direction:
+            return False
+        return True
+
 
 def startSimu(matrix, fps):
     """Initialise le Board
@@ -81,14 +89,21 @@ def startSimu(matrix, fps):
         matrix (Array): une image du board
         fps (integer): le nombre d'images par secondes affichées
     """
-    position = [int(len(matrix[0]) / 2), int(len(matrix) / 2)
+    position = [(int(len(matrix[0]) / 2)) - 1, (int(len(matrix) / 2)) - 1
                 ]  # position initiale de la fourmis : le centre du board
     direction = Direction.HAUT
     fourmis = Fourmis(position, direction)
-    printBoard(matrix, fourmis)
-    # while True:
-    #     matrix = nextIte(matrix, fourmis)
-    #     time.sleep(1 / fps)
+    # printBoard(matrix, fourmis)
+    finished = False
+    tmpMatrix = matrix
+    nextMatrix = []
+    while not finished:
+        printBoard(tmpMatrix, fourmis)
+        nextMatrix = nextIte(tmpMatrix, fourmis)
+        if fourmis.hasMoved():
+            finished = True
+        tmpMatrix = nextMatrix
+        time.sleep(1 / fps)
 
 
 def nextIte(matrix, fourmis):
@@ -103,7 +118,8 @@ def nextIte(matrix, fourmis):
     # la case précédente change de couleur
 
     originalPosition = fourmis.position
-    couleur = matrix[originalPosition[0]][originalPosition[1]]
+    # couleur = matrix[originalPosition[0]][originalPosition[1]]
+    couleur = couleurCell(matrix, originalPosition)
     fourmis.deplacement(couleur)
     if fourmis.position[0] < 0:
         fourmis.position[0] = 0
@@ -116,7 +132,6 @@ def nextIte(matrix, fourmis):
     matrix[originalPosition[0]][originalPosition[1]] = 1 if couleur == 0 else 0
     fourmis.ite += 1
 
-    printBoard(matrix, fourmis)
     return matrix
 
 
@@ -128,8 +143,21 @@ def printBoard(matrix, fourmis):
         ite (int): the current iteration number
     """
     print(fourmis.toString())
-    for row in matrix:
+    print(couleurCell(matrix, fourmis.position))
+    # for row in matrix:
+    #     rowString = ""
+    #     for cell in row:
+    #         rowString += "{} ".format(cell)
+    #     print(rowString)
+    for i in range(0, len(matrix)-1):
         rowString = ""
-        for cell in row:
-            rowString += "{} ".format(cell)
+        for j in range(0, len(matrix[i])-1):
+            if i == fourmis.position[0] and j == fourmis.position[1]:
+                rowString += "{} ".format("2")
+            else:
+                rowString += "{} ".format(matrix[i][j])
         print(rowString)
+
+
+def couleurCell(matrix, position):
+    return matrix[position[0]][position[1]]
