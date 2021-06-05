@@ -20,8 +20,8 @@ from sys import exit
 
 # Définition des constantes
 FILE = ""
-FPS = 10
-VERSION = "0.1"
+FPS = 1
+VERSION = "0.9"
 DEBUG = False
 
 
