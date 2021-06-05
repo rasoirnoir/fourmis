@@ -18,8 +18,7 @@ class Fourmis:
         self.position = position
         self.direction = direction
         self.ite = 0
-        self.previousPos = []
-        self.previousDir = None
+        self.previousPos = [-1, -1]
 
     def deplacement(self, couleur):
         """Déplace la fourmis sur le board d'après les règles du jeu
@@ -27,8 +26,9 @@ class Fourmis:
         Args:
             couleur (integer): la couleur de la case de départ de la fourmis
         """
-        self.previousPos = self.position
-        self.previousDir = self.direction
+        # self.previousPos = self.position
+        self.previousPos[0] = self.position[0]
+        self.previousPos[1] = self.position[1]
         if couleur == 0:  # case noire
             # on déplace la fourmis d'une case à gauche et on change son orientation
             # on tourne à gauche
@@ -77,7 +77,10 @@ class Fourmis:
         return ite + "\n" + pos + " " + dir
 
     def hasMoved(self):
-        if self.previousPos == self.position and self.previousDir == self.direction:
+        print("previous pos : {}, current pos : {}".format(
+            self.previousPos, self.position))
+        # if self.previousPos[0] == self.position[0] and self.previousPos[1] == self.position[1]:
+        if self.previousPos == self.position:
             return False
         return True
 
@@ -100,7 +103,7 @@ def startSimu(matrix, fps):
     while not finished:
         printBoard(tmpMatrix, fourmis)
         nextMatrix = nextIte(tmpMatrix, fourmis)
-        if fourmis.hasMoved():
+        if not fourmis.hasMoved():
             finished = True
         tmpMatrix = nextMatrix
         time.sleep(1 / fps)
@@ -125,11 +128,13 @@ def nextIte(matrix, fourmis):
         fourmis.position[0] = 0
     if fourmis.position[1] < 0:
         fourmis.position[1] = 0
-    if fourmis.position[0] >= len(matrix[0]):
+    if fourmis.position[0] > len(matrix[0]) - 1:
         fourmis.position[0] = len(matrix[0]) - 1
-    if fourmis.position[1] >= len(matrix):
+    if fourmis.position[1] > len(matrix) - 1:
         fourmis.position[1] = len(matrix) - 1
-    matrix[originalPosition[0]][originalPosition[1]] = 1 if couleur == 0 else 0
+    # matrix[originalPosition[0]][originalPosition[1]] = 1 if couleur == 0 else 0
+    matrix[fourmis.previousPos[0]][fourmis.previousPos[1]
+                                   ] = 1 if couleur == 0 else 0
     fourmis.ite += 1
 
     return matrix
@@ -149,9 +154,9 @@ def printBoard(matrix, fourmis):
     #     for cell in row:
     #         rowString += "{} ".format(cell)
     #     print(rowString)
-    for i in range(0, len(matrix)-1):
+    for i in range(len(matrix)):
         rowString = ""
-        for j in range(0, len(matrix[i])-1):
+        for j in range(len(matrix[i])):
             if i == fourmis.position[0] and j == fourmis.position[1]:
                 rowString += "{} ".format("2")
             else:
