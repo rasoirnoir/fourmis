@@ -1,4 +1,26 @@
 import time
+from kivy.app import App
+from kivy.uix.widget import Widget
+# from kivy.graphics import *
+import kivy.graphics as G
+
+
+class Board(Widget):
+    def __init__(self, **kwargs):
+        super(Board, self).__init__(**kwargs)
+        self.bind(pos=self.update_canvas)
+        self.bind(size=self.update_canvas)
+        self.update_canvas()
+
+    def update_canvas(self, *args):
+        self.canvas.clear()
+        with self.canvas:
+            G.Rectangle(pos=(10, 10), size=(500, 500))
+
+
+class FourmisApp(App):
+    def build(self):
+        return Board()
 
 
 def fourmisModule():
@@ -26,7 +48,6 @@ class Fourmis:
         Args:
             couleur (integer): la couleur de la case de départ de la fourmis
         """
-        # self.previousPos = self.position
         self.previousPos[0] = self.position[0]
         self.previousPos[1] = self.position[1]
         if couleur == 0:  # case noire
@@ -79,7 +100,6 @@ class Fourmis:
     def hasMoved(self):
         print("previous pos : {}, current pos : {}".format(
             self.previousPos, self.position))
-        # if self.previousPos[0] == self.position[0] and self.previousPos[1] == self.position[1]:
         if self.previousPos == self.position:
             return False
         return True
@@ -96,10 +116,10 @@ def startSimu(matrix, fps):
                 ]  # position initiale de la fourmis : le centre du board
     direction = Direction.HAUT
     fourmis = Fourmis(position, direction)
-    # printBoard(matrix, fourmis)
     finished = False
     tmpMatrix = matrix
     nextMatrix = []
+    FourmisApp().run()  # Démarrage de l'app kivy pour l'affichage graphique
     while not finished:
         printBoard(tmpMatrix, fourmis)
         nextMatrix = nextIte(tmpMatrix, fourmis)
@@ -121,7 +141,6 @@ def nextIte(matrix, fourmis):
     # la case précédente change de couleur
 
     originalPosition = fourmis.position
-    # couleur = matrix[originalPosition[0]][originalPosition[1]]
     couleur = couleurCell(matrix, originalPosition)
     fourmis.deplacement(couleur)
     if fourmis.position[0] < 0:
@@ -132,7 +151,6 @@ def nextIte(matrix, fourmis):
         fourmis.position[0] = len(matrix[0]) - 1
     if fourmis.position[1] > len(matrix) - 1:
         fourmis.position[1] = len(matrix) - 1
-    # matrix[originalPosition[0]][originalPosition[1]] = 1 if couleur == 0 else 0
     matrix[fourmis.previousPos[0]][fourmis.previousPos[1]
                                    ] = 1 if couleur == 0 else 0
     fourmis.ite += 1
@@ -149,11 +167,6 @@ def printBoard(matrix, fourmis):
     """
     print(fourmis.toString())
     print(couleurCell(matrix, fourmis.position))
-    # for row in matrix:
-    #     rowString = ""
-    #     for cell in row:
-    #         rowString += "{} ".format(cell)
-    #     print(rowString)
     for i in range(len(matrix)):
         rowString = ""
         for j in range(len(matrix[i])):
