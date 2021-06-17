@@ -3,9 +3,10 @@
 import argparse
 import sys
 import os.path
-import fourmis
+# import fourmis
 from signal import signal, SIGINT
 from sys import exit
+from board import FourmisApp
 
 '''
 
@@ -30,7 +31,12 @@ def version():
 
 
 def main():
-    fourmis.startSimu(parseFile(), FPS)
+    # fourmis.startSimu(parseFile(), FPS)
+    # Démarrage de l'app kivy pour l'affichage graphique(inversion)
+    fApp = FourmisApp()
+    fApp.board = parseFile()
+    fApp.fps = FPS
+    fApp.run()
 
 
 def parser():

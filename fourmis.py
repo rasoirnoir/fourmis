@@ -1,5 +1,5 @@
 import time
-from board import FourmisApp
+# from board import FourmisApp
 
 
 def fourmisModule():
@@ -84,7 +84,7 @@ class Fourmis:
         return True
 
 
-def startSimu(matrix, fps):
+def startSimu(matrix, fps=60):
     """Initialise le Board
 
     Args:
@@ -98,7 +98,7 @@ def startSimu(matrix, fps):
     finished = False
     tmpMatrix = matrix
     nextMatrix = []
-    FourmisApp().run()  # Démarrage de l'app kivy pour l'affichage graphique
+
     while not finished:
         printBoard(tmpMatrix, fourmis)
         nextMatrix = nextIte(tmpMatrix, fourmis)
